@@ -26,8 +26,6 @@ library(data.table)
 
 # cleaning memory, setting file system parameters
 rm(list = ls())
-#Sys.setlocale("LC_ALL", 'en_GB.UTF-8') # my system is Russian. By default all labels on graphs wil be in Russian.
-#Sys.setenv(LANG = "en_US.UTF-8")
 Sys.setlocale("LC_TIME", "en_US.UTF-8")
 
 setwd("~/CloudMailRu/Learning/R/Explore\ \ -\ project\ 1")  # set your working directory here
