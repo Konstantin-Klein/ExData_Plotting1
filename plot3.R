@@ -19,11 +19,14 @@
 # Time Fluctuations of Energy Sub Metering
 
 # ------------------------------------------------------------------
+library(data.table)
 
 # cleaning memory, setting file system parameters
-# rm(list = ls())
-Sys.setlocale("LC_ALL", 'en_GB.UTF-8') # my system is Russian. By default all labels on graphs wil be in Russian.
-Sys.setenv(LANG = "en_US.UTF-8")
+rm(list = ls())
+#Sys.setlocale("LC_ALL", 'en_GB.UTF-8') # my system is Russian. By default all labels on graphs wil be in Russian.
+#Sys.setenv(LANG = "en_US.UTF-8")
+Sys.setlocale("LC_TIME", "en_US.UTF-8")
+
 setwd("~/CloudMailRu/Learning/R/Explore\ \ -\ project\ 1")  # set your working directory here
 if(!file.exists("../raw"))  dir.create("../raw")
 
@@ -32,21 +35,20 @@ if(!file.exists("../raw/Consumption.zip")) {
       print(noquote("downloading datafile from URL"))
       fileUrl <-"https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip"
       download.file(fileUrl, "../raw/Consumption.zip", method = "curl")
-      } else print(noquote("Datafile found"))
+} else print(noquote("Datafile found"))
 
-if(!file.exists("../raw/household_power_consumption.txt")){
+filename = "../raw/household_power_consumption.txt"
+
+if(!file.exists(filename)){
       print(noquote("No dataset found. Unzipping data from archive"))
       unzip("../raw/Consumption.zip", exdir = "../raw")}
 
-# reading data into R
+# reading filtered data into R
 print(noquote("Reading data into R"))
-#data <- read.table("../raw/household_power_consumption.txt", 
-#      header = TRUE, sep = ";", 
-#      stringsAsFactors = FALSE, 
-#      na.strings = c("?", ""))
-
-#print(noquote("Filtering data by range of dates"))
-#data <- data[data$Date %in% c("1/2/2007","2/2/2007"), ]
+dtime <- difftime(as.POSIXct("2007-02-03"), as.POSIXct("2007-02-01"),units="mins")
+rowsToRead <- as.numeric(dtime)
+data <- fread(filename, skip="1/2/2007", nrows = rowsToRead, na.strings = c("?", ""))
+setnames(data, colnames(fread(filename, nrows=0)))
 
 # build timeline for the data
 data$date_time <- as.POSIXct(paste(data$Date, data$Time), format="%d/%m/%Y %H:%M:%S") 
