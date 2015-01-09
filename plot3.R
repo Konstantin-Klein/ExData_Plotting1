@@ -14,16 +14,14 @@
 
 # * Add the PNG file and R code file to your git repository
 
-### Plot 2
+### Plot 3
 
-
-# Time Fluctuations of Global Active Power
-
+# Time Fluctuations of Energy Sub Metering
 
 # ------------------------------------------------------------------
 
 # cleaning memory, setting file system parameters
-rm(list = ls())
+# rm(list = ls())
 Sys.setlocale("LC_ALL", 'en_GB.UTF-8') # my system is Russian. By default all labels on graphs wil be in Russian.
 Sys.setenv(LANG = "en_US.UTF-8")
 setwd("~/CloudMailRu/Learning/R/Explore\ \ -\ project\ 1")  # set your working directory here
@@ -42,32 +40,38 @@ if(!file.exists("../raw/household_power_consumption.txt")){
 
 # reading data into R
 print(noquote("Reading data into R"))
-data <- read.table("../raw/household_power_consumption.txt", 
-      header = TRUE, sep = ";", 
-      stringsAsFactors = FALSE, 
-      na.strings = c("?", ""))
+#data <- read.table("../raw/household_power_consumption.txt", 
+#      header = TRUE, sep = ";", 
+#      stringsAsFactors = FALSE, 
+#      na.strings = c("?", ""))
 
-print(noquote("Filtering data by range of dates"))
-data <- data[data$Date %in% c("1/2/2007","2/2/2007"), ]
+#print(noquote("Filtering data by range of dates"))
+#data <- data[data$Date %in% c("1/2/2007","2/2/2007"), ]
 
 # build timeline for the data
 data$date_time <- as.POSIXct(paste(data$Date, data$Time), format="%d/%m/%Y %H:%M:%S") 
 
-
 # building a new plot
 print(noquote("Building a new plot"))
+graphics.off()
 if (dev.cur() !=2) dev.new()  # platform dependent. Used for RStudio. 
 par(bg = "transparent")
-plot(x = data$date_time, y = data$Global_active_power, 
-     type = "l", main = "", 
-     ylab = "Global Active Power (kilowatts)",
-     xlab = "") 
+plot(x = data$date_time, y = data$Sub_metering_1, type = "l", ylab = "Energy sub metering", xlab = "") 
+lines(x = data$date_time, y = data$Sub_metering_2, col = "red") 
+lines(x = data$date_time, y = data$Sub_metering_3, col = "blue")
+legend("topright", lty = 1, col = c("black", "red", "blue"),
+       legend = c("Sub_metering_1","Sub_metering_2","Sub_metering_3"),
+       text.width = strwidth("1,000,000,000,000"))
 
-print(noquote("Copying the plot to a PNG device"))
-dev.copy(png, file = "plot2.png", width = 480, 
-      height = 480, units = "px", 
-      pointsize = 12, 
-      bg = "transparent")
+print(noquote("Building the same plot to a PNG device"))  # dev.copy is not flexible enough
+png(file = "plot3.png", width = 480, height = 480, units = "px", 
+      pointsize = 12, bg = "transparent")
+plot(x = data$date_time, y = data$Sub_metering_1, type = "l", ylab = "Energy sub metering", xlab = "") 
+lines(x = data$date_time, y = data$Sub_metering_2, col = "red") 
+lines(x = data$date_time, y = data$Sub_metering_3, col = "blue")
+legend("topright", lty = 1, col = c("black", "red", "blue"),
+       legend = c("Sub_metering_1","Sub_metering_2","Sub_metering_3"),
+       text.width = strwidth("1,000,000,000,000"))
 
 # closing off
 print(noquote("Closing the file"))
